@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata: 
+  name: customer-api
+  namespace: prod
+spec:
+  replicas: 4
+  strategy:
+    canary:
+      analysis:
+        templates:
+        - templateName: customer-api-sli
+      steps:
+      - setWeight: 20
+      - pause: { duration: 60}
+      - setWeight: 50
+      - pause: { duration: 120}
+      - setWeight: 100
+  selector:
+    matchLabels:
+      app: customer-api
+  template:
+    metadata:
+      labels:
+        app: customer-api
+    spec:
+      containers:
+      - name: api
+        image: nginx
+        ports:
+        - containerPort: 8080

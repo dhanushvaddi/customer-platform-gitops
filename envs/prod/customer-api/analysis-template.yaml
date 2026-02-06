@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: customer-api-sli
+  namespace: prod
+spec:
+  metrics:
+  - name: request-rate
+    interval: 30s
+    successCondition: result[0] > 1
+    provider:
+      prometheus:
+        address: http://monitoring-kube-prometheus-stack-prometheus.monitoring:9090
+        query: |
+          sum(rate(http_requests_total[1m]))

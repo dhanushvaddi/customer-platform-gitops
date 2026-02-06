@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: customer-api
+  namespace: practice
+spec:
+  replicas: 2
+  strategy:
+    canary:
+      steps:
+      - setWeight: 50
+      - pause: { duration: 30 }
+  selector:
+    matchLabels:
+      app: customer-api
+  template:
+    metadata:
+      labels:
+        app: customer-api
+    spec:
+      containers:
+      - name: api
+        image: nginx
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: customer-api-config
+        - secretRef:
+            name: customer-api-secret

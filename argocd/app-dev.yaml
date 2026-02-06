@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: customer-api-dev
+  namespace: argocd
+spec:
+  project: dev-project
+  source:
+    repoURL: https://github.com/dhanushvaddi/customer-platform-gitops.git
+    path: envs/dev/customer-api
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: practice
+  syncPolicy:
+    automated:
+      selfHeal: true
